@@ -54,8 +54,8 @@ with st.sidebar:
 
     Security_Group = st.multiselect(label="Select Industry type",
                                      options=Security_Group_List,
-                                    #  default=Security_Group_List
-                                    default=["Public Sector Bank",'Non Banking Financial Company (NBFC)'],
+                                    # default=Security_Group_List
+                                    # default=["Public Sector Bank",'Non Banking Financial Company (NBFC)'],
                                     max_selections=5
                                      )
     
