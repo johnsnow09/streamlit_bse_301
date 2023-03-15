@@ -7,7 +7,7 @@ from numerize.numerize import numerize
 import plotly.express as px
 
 # https://stackoverflow.com/questions/40996175/loading-a-rds-file-in-pandas
-import pyreadr
+# import pyreadr
 
 
 # from: https://youtu.be/lWxN-n6L7Zc
