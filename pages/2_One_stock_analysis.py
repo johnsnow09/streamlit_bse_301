@@ -111,7 +111,7 @@ fig_price_journey = px.line(df_selected.to_pandas(),x='date',y='CLOSE',
                             title=f'<b>{Security_Name} Price Journey</b>')
 fig_price_journey.update_xaxes(rangeslider_visible = True)
 # fig_price_journey.update_layout(xaxis_range = ['2020-01-01','2023-03-10'],
-fig_price_journey.update_layout(xaxis_range = ['2020-01-01',df_selected2.select(pl.col('date').max()],                                   
+fig_price_journey.update_layout(xaxis_range = ['2020-01-01',df_selected2.select(pl.col('date')).max()],                                   
                                 showlegend = False,
                                 title = {'x':0.5},
                                 plot_bgcolor = "rgba(0,0,0,0)",
@@ -130,7 +130,7 @@ df_selected2 = df_selected2.with_columns((pl.col('CLOSE').pct_change()*100).alia
 fig_price_pct = px.line(df_selected2.to_pandas(),x='date',y='pct_change',title=f'<b>{Security_Name} % Price Change</b>')
 fig_price_pct.update_xaxes(rangeslider_visible = True)
 # fig_price_pct.update_layout(xaxis_range = ['2020-01-01','2023-03-10'],
-fig_price_journey.update_layout(xaxis_range = ['2020-01-01',df_selected2.select(pl.col('date').max()],                            
+fig_price_journey.update_layout(xaxis_range = ['2020-01-01',df_selected2.select(pl.col('date')).max()],                            
                                 showlegend = False,
                                 title = {'x':0.5},
                                 plot_bgcolor = "rgba(0,0,0,0)",
