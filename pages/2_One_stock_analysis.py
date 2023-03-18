@@ -35,7 +35,7 @@ header_left,header_mid,header_right = st.columns([1,3,1],gap = "large")
 
 with header_mid:
     # https://docs.streamlit.io/library/get-started/create-an-app
-    st.title("Streamlit app in Polars")
+    st.title("One stock Analysis Page")
     
     # Create a text element and let the reader know the data is loading.
     # data_load_state = st.text('Loading data...')
@@ -52,7 +52,7 @@ with st.sidebar:
     Security_Group_List = df.lazy().filter(pl.col('SC_TYPE').is_in(Security_Type)).select(
                                                 pl.col('SC_GROUP')).unique().collect().to_series().to_list()
 
-    Security_Group = st.multiselect(label="Select Security type",
+    Security_Group = st.multiselect(label="Select Security Group",
                                      options=Security_Group_List,
                                      default=Security_Group_List)
     
@@ -84,7 +84,7 @@ lifetime_low = float(df_selected['CLOSE'].min())
 no_1,no_2,no_3,no_4,no_5 = st.columns(5, gap="large")
 
 with no_1:
-    st.image('Icons/kick-me.png', use_column_width='Auto')
+    st.image('Icons/glasses.png', use_column_width='Auto')
     st.metric(label='Sector',value=Sector_Name)
 
 with no_2:
@@ -100,7 +100,7 @@ with no_4:
     st.metric(label='Highest Price',value=numerize(lifetime_high)) 
 
 with no_5:
-    st.image('Icons/glasses.png', use_column_width='Auto')
+    st.image('Icons/kick-me.png', use_column_width='Auto')
     st.metric(label='Lowest Price',value=numerize(lifetime_low))
 
 
@@ -111,7 +111,7 @@ fig_price_journey = px.line(df_selected.to_pandas(),x='date',y='CLOSE',
                             title=f'<b>{Security_Name} Price Journey</b>')
 fig_price_journey.update_xaxes(rangeslider_visible = True)
 # fig_price_journey.update_layout(xaxis_range = ['2021-01-01','2023-03-10'],
-fig_price_journey.update_layout(xaxis_range = ['2021-01-01',df_selected.select(pl.col('date')).max().item()],                                   
+fig_price_journey.update_layout(xaxis_range = ['2021-01-01',df_selected.select(pl.col('date')).max().item()],  
                                 showlegend = False,
                                 title = {'x':0.5},
                                 plot_bgcolor = "rgba(0,0,0,0)",
@@ -130,7 +130,7 @@ df_selected2 = df_selected2.with_columns((pl.col('CLOSE').pct_change()*100).alia
 fig_price_pct = px.line(df_selected2.to_pandas(),x='date',y='pct_change',title=f'<b>{Security_Name} % Price Change</b>')
 fig_price_pct.update_xaxes(rangeslider_visible = True)
 # fig_price_pct.update_layout(xaxis_range = ['2021-01-01','2023-03-10'],
-fig_price_pct.update_layout(xaxis_range = ['2021-01-01',df_selected2.select(pl.col('date')).max().item()],                            
+fig_price_pct.update_layout(xaxis_range = ['2021-01-01',df_selected2.select(pl.col('date')).max().item()],   
                                 showlegend = False,
                                 title = {'x':0.5},
                                 plot_bgcolor = "rgba(0,0,0,0)",

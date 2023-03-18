@@ -34,7 +34,7 @@ header_left,header_mid,header_right = st.columns([1,3,1],gap = "large")
 
 with header_mid:
     # https://docs.streamlit.io/library/get-started/create-an-app
-    st.title("Analyse & Compare Stocks by Industry")
+    st.title("Analyse Stocks by Industry")
     
     # Create a text element and let the reader know the data is loading.
     # data_load_state = st.text('Loading data...')
@@ -54,8 +54,8 @@ with st.sidebar:
 
     Security_Group = st.multiselect(label="Select Industry type",
                                      options=Security_Group_List,
-                                    # default=Security_Group_List
-                                    # default=["Public Sector Bank",'Non Banking Financial Company (NBFC)'],
+                                    #  default=Security_Group_List
+                                    default=["Public Sector Bank",'Non Banking Financial Company (NBFC)'],
                                     max_selections=5
                                      )
     
@@ -95,7 +95,8 @@ df_selected = df.lazy().filter(
 fig_price_journey = px.line(df_selected.to_pandas(),x='date',y='CLOSE',color='SC_NAME',
                             title=f'<b>{Security_Name} Price Journey</b>')
 fig_price_journey.update_xaxes(rangeslider_visible = True)
-fig_price_journey.update_layout(xaxis_range = ['2020-01-01','2023-03-10'],
+# fig_price_journey.update_layout(xaxis_range = ['2021-01-01','2023-03-10'],
+fig_price_journey.update_layout(xaxis_range = ['2021-01-01',df_selected.select(pl.col('date')).max().item()],
                                 showlegend = True,
                                 title = {'x':0.5},
                                 plot_bgcolor = "rgba(0,0,0,0)",
@@ -115,7 +116,8 @@ df_selected2 = df_selected2.sort(['SC_NAME','date']).with_columns((pl.col('CLOSE
 
 fig_price_pct = px.line(df_selected2.to_pandas(),x='date',y='pct_change',title=f'<b>{Security_Name} % Price Change</b>')
 fig_price_pct.update_xaxes(rangeslider_visible = True)
-fig_price_pct.update_layout(xaxis_range = ['2020-01-01','2023-03-10'],
+# fig_price_pct.update_layout(xaxis_range = ['2021-01-01','2023-03-10'],
+fig_price_pct.update_layout(xaxis_range = ['2021-01-01',df_selected2.select(pl.col('date')).max().item()],  
                                 showlegend = True,
                                 title = {'x':0.5},
                                 plot_bgcolor = "rgba(0,0,0,0)",
