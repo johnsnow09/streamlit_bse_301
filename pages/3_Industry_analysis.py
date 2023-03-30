@@ -79,7 +79,9 @@ with st.sidebar:
 
 df_selected = df.lazy().filter( 
                        (pl.col('SC_NAME').is_in(Security_Name))
-                       ).sort(['SC_NAME','date']).collect()
+                       ).sort(['SC_NAME','date']).select(
+                            pl.col(['SC_NAME','date','CLOSE'])
+                        ).collect()
 
 # Sector_Name = df_selected.select(pl.col('Sector Name')).unique().item()
 # Industry_Name = df_selected.select(pl.col('Industry')).unique().item()

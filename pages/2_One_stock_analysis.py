@@ -2,6 +2,7 @@ import streamlit as st
 import polars as pl
 import pandas as pd
 import numpy as np
+import datetime as dt
 from numerize.numerize import numerize
 
 import plotly.express as px
@@ -69,11 +70,21 @@ with st.sidebar:
                                    default="ADANI POWER",
                                    max_selections=1)
     
+    min_date_default = df.lazy().filter(pl.col('SC_NAME').is_in(Security_Name)).select('date').min().collect().item()
+    max_date_default = df.lazy().filter(pl.col('SC_NAME').is_in(Security_Name)).select('date').max().collect().item()
+    
 
+    Security_date_range = st.date_input("Pick date range", (min_date_default,max_date_default),
+                  min_value = df.lazy().select('date').min().collect().item(),
+                  max_value = df.lazy().select('date').max().collect().item())
+    
+    # st.write(Security_date_range)
 
-df_selected = df.lazy().filter((pl.col('SC_TYPE').is_in(Security_Type)) &
+    df_selected = df.lazy().filter((pl.col('SC_TYPE').is_in(Security_Type)) &
                        (pl.col('SC_GROUP').is_in(Security_Group)) & 
-                       (pl.col('SC_NAME').is_in(Security_Name))).collect()
+                       (pl.col('SC_NAME').is_in(Security_Name)) 
+                       & (pl.col('date').is_between(Security_date_range[0],Security_date_range[1]) )
+                       ).collect()
 
 Sector_Name = df_selected.select(pl.col('Sector Name')).unique().item()
 Industry_Name = df_selected.select(pl.col('Industry')).unique().item()
@@ -107,16 +118,19 @@ with no_5:
 
 ############## Below code is same as above but in 1 column & 2 Rows instead ##############
 
-fig_price_journey = px.line(df_selected.to_pandas(),x='date',y='CLOSE',
+fig_price_journey = px.line(df_selected.select(pl.col(['SC_NAME','date','CLOSE'])
+                        ).to_pandas(),x='date',y='CLOSE',
                             title=f'<b>{Security_Name} Price Journey</b>')
 fig_price_journey.update_xaxes(rangeslider_visible = True)
 # fig_price_journey.update_layout(xaxis_range = ['2021-01-01','2023-03-10'],
-fig_price_journey.update_layout(xaxis_range = ['2021-01-01',df_selected.select(pl.col('date')).max().item()],  
-                                showlegend = False,
-                                title = {'x':0.5},
-                                plot_bgcolor = "rgba(0,0,0,0)",
-                                xaxis = (dict(showgrid = False)),
-                                yaxis = (dict(showgrid = False)),)
+
+# uncomment below to add date range slider
+# fig_price_journey.update_layout(xaxis_range = ['2021-01-01',df_selected.select(pl.col('date')).max().item()],  
+#                                 showlegend = False,
+#                                 title = {'x':0.5},
+#                                 plot_bgcolor = "rgba(0,0,0,0)",
+#                                 xaxis = (dict(showgrid = False)),
+#                                 yaxis = (dict(showgrid = False)),)
 
 st.plotly_chart(fig_price_journey,use_container_width=True)
 
@@ -127,7 +141,9 @@ df_selected2 = df_selected2.with_columns((pl.col('CLOSE').pct_change()*100).alia
 
 # st.table(df_selected2.head().to_pandas())
 
-fig_price_pct = px.line(df_selected2.to_pandas(),x='date',y='pct_change',title=f'<b>{Security_Name} % Price Change</b>')
+fig_price_pct = px.line(df_selected2.select(
+                            pl.col(['SC_NAME','date','pct_change'])
+                        ).to_pandas(),x='date',y='pct_change',title=f'<b>{Security_Name} % Price Change</b>')
 fig_price_pct.update_xaxes(rangeslider_visible = True)
 # fig_price_pct.update_layout(xaxis_range = ['2021-01-01','2023-03-10'],
 fig_price_pct.update_layout(xaxis_range = ['2021-01-01',df_selected2.select(pl.col('date')).max().item()],   
